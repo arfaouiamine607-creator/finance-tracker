@@ -1,0 +1,66 @@
+# .gitignore — tells Git which files to NEVER track
+# This is important: we don't want passwords or build artifacts on GitHub
+
+# =============================================
+# Maven build output
+# The 'target' folder is where Maven puts compiled classes and the JAR.
+# It's generated automatically, so we never commit it.
+# =============================================
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# =============================================
+# Application secrets — NEVER commit these
+# If someone finds your DB password on GitHub, your app is compromised.
+# =============================================
+application-local.properties
+application-prod.properties
+*.env
+.env
+
+# =============================================
+# IDE files — personal editor settings
+# Each developer has their own IDE config; don't pollute the repo.
+# =============================================
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Eclipse
+.eclipse/
+.classpath
+.project
+.settings/
+
+# =============================================
+# OS-generated junk files
+# =============================================
+.DS_Store        # macOS folder thumbnails
+Thumbs.db        # Windows folder thumbnails
+desktop.ini      # Windows folder settings
+
+# =============================================
+# Logs — generated at runtime, not source code
+# =============================================
+*.log
+logs/
+
+# =============================================
+# Docker — local override files
+# =============================================
+docker-compose.override.yml
+
+# =============================================
+# Phase notes — personal dev notes, not part of the codebase
+# Kept locally for reference, not published to GitHub
+# =============================================
+phase-notes/
