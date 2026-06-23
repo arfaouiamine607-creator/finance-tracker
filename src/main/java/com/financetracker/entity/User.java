@@ -101,6 +101,13 @@ public class User implements UserDetails {
         return email;
     }
 
+    // getUsername() is already taken by Spring Security (it returns the email).
+    // So I use getDisplayName() to get the actual username the user picked (e.g. "john_doe").
+    // Lombok couldn't generate this getter automatically because of the name conflict.
+    public String getDisplayName() {
+        return this.username;
+    }
+
     // I'm keeping all accounts active for now.
     // I can add isLocked or isEnabled columns later if I need account suspension.
     @Override
