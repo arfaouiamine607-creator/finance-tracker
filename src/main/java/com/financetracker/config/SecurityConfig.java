@@ -69,6 +69,11 @@ public class SecurityConfig {
                 // Anyone can call /api/auth/register and /api/auth/login
                 // without a token — this is how new users sign up and get their token
                 .requestMatchers("/auth/**").permitAll()
+                // Allow Spring's internal /error endpoint so that error responses
+                // (400 validation errors, 500 server errors) reach the client correctly.
+                // Without this, Spring Security blocks the error forward and returns 403
+                // instead of the real error code.
+                .requestMatchers("/error").permitAll()
                 // Every other route requires the user to be authenticated (have a valid token)
                 .anyRequest().authenticated()
             )

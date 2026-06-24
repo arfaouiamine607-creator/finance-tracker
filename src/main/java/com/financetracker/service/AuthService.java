@@ -24,6 +24,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 // Marks this as a Spring service (business logic layer)
 import org.springframework.stereotype.Service;
 
+// Lets us throw HTTP errors with the right status code directly from the service
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatus;
+
 // AuthService handles two things:
 //   1. register() — creates a new user account and returns a token
 //   2. login()    — checks credentials and returns a token if correct
@@ -71,12 +75,13 @@ public class AuthService {
         // We check before trying to save to give a clear error message
         // instead of a confusing database constraint violation.
         if (userRepository.existsByEmail(request.getEmail())) {
-            throw new RuntimeException("An account with this email already exists");
+            // 409 Conflict = "the resource already exists" — more accurate than 500
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "An account with this email already exists");
         }
 
         // Reject registration if this username is already taken
         if (userRepository.existsByUsername(request.getUsername())) {
-            throw new RuntimeException("This username is already taken");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "This username is already taken");
         }
 
         // Build the new User object.

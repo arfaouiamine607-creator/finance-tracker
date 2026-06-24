@@ -3,6 +3,9 @@ package com.financetracker.security;
 // Needed to load the user from the database by their email
 import com.financetracker.repository.UserRepository;
 
+// The base class for all JWT errors (expired, malformed, wrong signature, etc.)
+import io.jsonwebtoken.JwtException;
+
 // Standard Java IO imports for reading the HTTP request and response
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -72,8 +75,20 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // Chop off the "Bearer " prefix (7 characters) to get just the token string
         String token = authHeader.substring(7);
 
-        // Read the email address out of the token
-        String email = jwtUtil.extractEmail(token);
+        // Read the email address out of the token.
+        // We wrap this in try-catch because jwtUtil.extractEmail() throws JwtException
+        // if the token is malformed, expired, or has a bad signature.
+        // Without this catch, a garbage token causes a 500 server error.
+        // With it, we just skip authentication and let Spring Security return 403.
+        String email;
+        try {
+            email = jwtUtil.extractEmail(token);
+        } catch (JwtException e) {
+            // Token is invalid — skip authentication entirely.
+            // Spring Security will block the request with 403 if the route needs auth.
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         // Only proceed if:
         //   1. We got a real email from the token (token wasn't empty/garbage)
