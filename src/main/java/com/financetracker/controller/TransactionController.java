@@ -31,7 +31,8 @@ import java.util.List;
 //   GET    /api/transactions/{id}   — get one transaction by ID
 //   DELETE /api/transactions/{id}   — delete one transaction
 @RestController // handles HTTP requests and automatically serializes return values to JSON
-@RequestMapping("/api/transactions") // all methods in this class share this base URL
+@RequestMapping("/transactions") // all methods in this class share this base URL
+// Note: context path is /api (set in application.properties), so full URL is /api/transactions
 public class TransactionController {
 
     // The service that contains all the business logic
